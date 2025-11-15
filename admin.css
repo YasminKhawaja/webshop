@@ -1,0 +1,607 @@
+/* === BASIS === */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f6fa;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+/* === NAVBAR === */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 1em 2em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 1.6em;
+  color: #4a90e2;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 1em;
+}
+
+.add-product-btn {
+  background: #4a90e2;
+  color: #fff;
+  padding: 0.6em 1.2em;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.add-product-btn:hover {
+  background: #3578c0;
+}
+
+.logout-btn {
+  background: #fff;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
+  padding: 0.6em 1.2em;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #4a90e2;
+  color: #fff;
+}
+
+/* === DASHBOARD CONTAINER === */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 2em auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-container h1 {
+  color: #4a90e2;
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+/* === FILTER BAR === */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: space-between;
+  margin-bottom: 2em;
+}
+
+.filter-bar select,
+.filter-bar input {
+  padding: 0.6em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95em;
+  min-width: 160px;
+}
+
+.filter-btn {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.filter-btn:hover {
+  background: #222;
+}
+
+/* === PRODUCT TABEL === */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  padding: 0.9em 1em;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.product-table th {
+  background: #f0f6ff;
+  color: #4a90e2;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+}
+
+.product-table img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* === ACTIE KNOPPEN === */
+.edit-btn,
+.delete-btn {
+  display: inline-block;
+  padding: 0.4em 0.9em;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9em;
+  transition: all 0.2s;
+}
+
+.edit-btn {
+  background: #4a90e2;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #3578c0;
+}
+
+.delete-btn {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background: #d9363e;
+}
+
+/* === FOOTER === */
+footer {
+  text-align: center;
+  padding: 1em 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  color: #777;
+  font-size: 0.9em;
+}
+
+/* === ADD PRODUCT PAGE === */
+.add-product-container {
+  width: 800px;
+  margin: 2em auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2.5em 3em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.add-product-container h1 {
+  color: #4a90e2;
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.add-product-form label {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-weight: 600;
+  color: #333;
+}
+
+.add-product-form input,
+.add-product-form select,
+.add-product-form textarea {
+  width: 100%;
+  padding: 0.8em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  transition: border-color 0.2s;
+}
+
+.add-product-form input:focus,
+.add-product-form select:focus,
+.add-product-form textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.add-product-form textarea {
+  resize: vertical;
+}
+
+.save-btn {
+  display: block;
+  width: 100%;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1em;
+  font-weight: 600;
+  padding: 0.9em;
+  margin-top: 2em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #222;
+}
+
+/* Back knop */
+.back-btn {
+  background: #fff;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
+  padding: 0.6em 1.2em;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: #4a90e2;
+  color: #fff;
+}
+
+/* === BASIS === */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f6fa;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* === NAVBAR === */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 1em 3em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.7em;
+  color: #4a90e2;
+  letter-spacing: 1px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.back-btn,
+.logout-btn {
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 25px;
+  padding: 0.6em 1.2em;
+  transition: all 0.2s;
+}
+
+.back-btn {
+  background: #fff;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
+}
+
+.back-btn:hover {
+  background: #4a90e2;
+  color: #fff;
+}
+
+.logout-btn {
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+}
+
+.logout-btn:hover {
+  background: #222;
+}
+
+/* === EDIT PRODUCT PAGE === */
+.edit-product-container {
+  width: 800px;
+  margin: 2em auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2.5em 3em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.edit-product-container h1 {
+  color: #4a90e2;
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.edit-product-form label {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-weight: 600;
+  color: #333;
+}
+
+.edit-product-form input,
+.edit-product-form select,
+.edit-product-form textarea {
+  width: 100%;
+  padding: 0.8em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  transition: border-color 0.2s;
+}
+
+.edit-product-form input:focus,
+.edit-product-form select:focus,
+.edit-product-form textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.edit-product-form textarea {
+  resize: vertical;
+}
+
+/* === IMAGE PREVIEW === */
+.image-preview {
+  margin-top: 1.5em;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 1em;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 150px;
+  border-radius: 8px;
+  margin-top: 0.5em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* === BUTTON ROW === */
+.button-row {
+  display: flex;
+  gap: 1em;
+  justify-content: space-between;
+  margin-top: 2em;
+}
+
+.update-btn {
+  flex: 1;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1em;
+  font-weight: 600;
+  padding: 0.9em;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.update-btn:hover {
+  background: #222;
+}
+
+.cancel-btn {
+  flex: 1;
+  text-align: center;
+  background: #fff;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
+  border-radius: 30px;
+  padding: 0.9em;
+  font-weight: 600;
+  font-size: 1.1em;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #4a90e2;
+  color: #fff;
+}
+
+/* === FOOTER === */
+footer {
+  text-align: center;
+  padding: 1em 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  color: #777;
+  font-size: 0.9em;
+  margin-top: 3em;
+  flex-shrink: 0;
+}
+
+/* === BESTELLINGEN OVERZICHT === */
+.orders-section {
+  margin-top: 3em;
+}
+
+.orders-section h3 {
+  color: #4a90e2;
+  margin-bottom: 1em;
+  border-bottom: 2px solid #e3e9f2;
+  padding-bottom: 0.3em;
+}
+
+/* Tabelstijl */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 1em;
+  text-align: left;
+  font-size: 0.95em;
+  border-bottom: 1px solid #eee;
+}
+
+.orders-table th {
+  background: #f5f6fa;
+  color: #4a90e2;
+  font-weight: 600;
+}
+
+.orders-table tr:hover {
+  background: #f9faff;
+}
+
+.orders-table td {
+  color: #333;
+}
+
+/* Statuskleuren */
+.status-paid {
+  color: #22bb33;
+  font-weight: 600;
+}
+
+.status-pending {
+  color: #f0ad4e;
+  font-weight: 600;
+}
+
+/* Mobielvriendelijke weergave */
+@media (max-width: 600px) {
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tr {
+    display: block;
+    margin-bottom: 1em;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8em 1em;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .orders-table td:last-child {
+    border-bottom: none;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4a90e2;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
+  }
+
+  .edit-product-container {
+    padding: 2em 1.5em;
+    margin: 1em;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .update-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .add-product-container {
+    padding: 2em 1.5em;
+    margin: 1em;
+  }
+
+  .save-btn {
+    font-size: 1em;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar select,
+  .filter-bar input,
+  .filter-btn {
+    width: 100%;
+  }
+
+  .dashboard-container {
+    padding: 1.5em;
+  }
+
+  .product-table th,
+  .product-table td {
+    font-size: 0.9em;
+  }
+}
