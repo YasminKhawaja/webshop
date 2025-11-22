@@ -1,4 +1,23 @@
-<!DOCTYPE html>
+<?php
+include_once(__DIR__ . "/classes/Database.php");
+include_once(__DIR__ . "/classes/User.php");
+include_once("nav.inc.php");
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['username']; 
+    $password = $_POST['password'];
+
+    if (User::login($email, $password)) {
+        header("Location: account.php");
+        exit;
+    } else {
+        $error = "Ongeldig e-mailadres of wachtwoord.";
+    }
+}
+
+?><!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
@@ -6,32 +25,11 @@
     <link rel="stylesheet" href="style2.css" />
   </head>
   <body>
-    <nav class="navbar">
-      <a href="home.php" class="logo">GlowCare</a>
-
-      <form class="search-form" action="/search" method="GET">
-        <input
-          type="search"
-          name="q"
-          placeholder="Waar ben je naar op zoek?"
-          aria-label="Zoeken"
-          required
-        />
-        <button type="submit" aria-label="Zoeken">Zoek</button>
-      </form>
-
-      <div class="nav-actions">
-        <a href="login.php" class="login-btn">Inloggen</a>
-        <a href="winkelwagen.php" class="cart-btn" aria-label="Winkelwagen"
-          >🛒</a
-        >
-      </div>
-    </nav>
 
     <main class="main-login-wrapper">
       <section class="login-section">
         <h2>Inloggen</h2>
-        <form class="login-form" action="#" method="POST">
+        <form class="login-form" action="login.php" method="POST">
           <label for="username">Gebruikersnaam</label>
           <input type="text" id="username" name="username" required />
 
@@ -41,6 +39,9 @@
           <a href="password-reset.php" class="forgot-password"
             >Wachtwoord vergeten?</a
           >
+          <?php if (!empty($error)): ?>
+              <p style="color: red; text-align: center;"><?php echo $error; ?></p>
+          <?php endif; ?>
 
           <button type="submit">Inloggen</button>
 
