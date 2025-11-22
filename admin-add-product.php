@@ -8,9 +8,9 @@
   </head>
   <body>
     <nav class="navbar">
-      <a href="admin-dashboard.html" class="logo">GlowCare Admin</a>
+      <a href="admin-dashboard.php" class="logo">GlowCare Admin</a>
       <div class="nav-actions">
-        <a href="admin-dashboard.html" class="back-btn"
+        <a href="admin-dashboard.php" class="back-btn"
           >← Terug naar Dashboard</a
         >
         <a href="logout.php" class="logout-btn">Uitloggen</a>

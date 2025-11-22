@@ -13,7 +13,7 @@ include_once(__DIR__ . "/classes/Database.php");
   </head>
   <body>
     <nav class="navbar">
-      <a href="home.html" class="logo">GlowCare</a>
+      <a href="home.php" class="logo">GlowCare</a>
 
       <form class="search-form" action="/search" method="GET">
         <input
@@ -27,11 +27,11 @@ include_once(__DIR__ . "/classes/Database.php");
       </form>
 
       <div class="nav-actions">
-        <a href="login.html" class="login-btn">Inloggen</a>
-        <a href="winkelwagen.html" class="cart-btn" aria-label="Winkelwagen"
+        <a href="login.php" class="login-btn">Inloggen</a>
+        <a href="winkelwagen.php" class="cart-btn" aria-label="Winkelwagen"
           >🛒</a
         >
-        <a href="account.html">Account</a>
+        <a href="account.php">Account</a>
       </div>
     </nav>
 
@@ -117,7 +117,7 @@ include_once(__DIR__ . "/classes/Database.php");
 
         <!-- Producten rechts -->
         <div class="products">
-          <a href="detailpagina.html" class="product-card-link">
+          <a href="detailpagina.php" class="product-card-link">
             <div class="product-card">
               <img src="images/cleanser.jpg" alt="Gentle Cleanser" />
               <h3>Gentle Cleanser</h3>
@@ -127,7 +127,7 @@ include_once(__DIR__ . "/classes/Database.php");
             </div>
           </a>
 
-          <a href="detailpagina.html" class="product-card-link">
+          <a href="detailpagina.php" class="product-card-link">
             <div class="product-card">
               <img src="images/serum.jpg" alt="Hydrating Serum" />
               <h3>Hydrating Serum</h3>
@@ -137,7 +137,7 @@ include_once(__DIR__ . "/classes/Database.php");
             </div>
           </a>
 
-          <a href="detailpagina.html" class="product-card-link">
+          <a href="detailpagina.php" class="product-card-link">
             <div class="product-card">
               <img src="images/serum.jpg" alt="Hydrating Serum" />
               <h3>Hydrating Serum</h3>
@@ -147,7 +147,7 @@ include_once(__DIR__ . "/classes/Database.php");
             </div>
           </a>
 
-          <a href="detailpagina.html" class="product-card-link">
+          <a href="detailpagina.php" class="product-card-link">
             <div class="product-card">
               <img src="images/serum.jpg" alt="Hydrating Serum" />
               <h3>Hydrating Serum</h3>
@@ -157,7 +157,7 @@ include_once(__DIR__ . "/classes/Database.php");
             </div>
           </a>
 
-          <a href="detailpagina.html" class="product-card-link">
+          <a href="detailpagina.php" class="product-card-link">
             <div class="product-card">
               <img src="images/serum.jpg" alt="Hydrating Serum" />
               <h3>Hydrating Serum</h3>
@@ -168,7 +168,7 @@ include_once(__DIR__ . "/classes/Database.php");
           </a>
 
           <div class="product-card">
-            <a href="detailpagina.html" class="product-card-link">
+            <a href="detailpagina.php" class="product-card-link">
               <img src="images/serum.jpg" alt="Hydrating Serum" />
               <h3>Hydrating Serum</h3>
               <p>Intense hydratatie voor alle huidtypes.</p>

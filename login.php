@@ -7,7 +7,7 @@
   </head>
   <body>
     <nav class="navbar">
-      <a href="home.html" class="logo">GlowCare</a>
+      <a href="home.php" class="logo">GlowCare</a>
 
       <form class="search-form" action="/search" method="GET">
         <input
@@ -21,8 +21,8 @@
       </form>
 
       <div class="nav-actions">
-        <a href="login.html" class="login-btn">Inloggen</a>
-        <a href="winkelwagen.html" class="cart-btn" aria-label="Winkelwagen"
+        <a href="login.php" class="login-btn">Inloggen</a>
+        <a href="winkelwagen.php" class="cart-btn" aria-label="Winkelwagen"
           >🛒</a
         >
       </div>
@@ -38,7 +38,7 @@
           <label for="password">Wachtwoord</label>
           <input type="password" id="password" name="password" required />
 
-          <a href="password-reset.html" class="forgot-password"
+          <a href="password-reset.php" class="forgot-password"
             >Wachtwoord vergeten?</a
           >
 
@@ -46,7 +46,7 @@
 
           <span class="anders">Of</span>
 
-          <a href="register.html" class="register-btn">Registreren</a>
+          <a href="register.php" class="register-btn">Registreren</a>
         </form>
       </section>
     </main>

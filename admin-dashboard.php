@@ -8,9 +8,9 @@
   </head>
   <body>
     <nav class="navbar">
-      <a href="admin-dashboard.html" class="logo">GlowCare Admin</a>
+      <a href="admin-dashboard.php" class="logo">GlowCare Admin</a>
       <div class="nav-actions">
-        <a href="admin-add-product.html" class="add-product-btn"
+        <a href="admin-add-product.php" class="add-product-btn"
           >+ Nieuw product</a
         >
         <a href="logout.php" class="logout-btn">Uitloggen</a>
@@ -79,7 +79,7 @@
             <td>Ja</td>
             <td><img src="images/cleanser.jpg" alt="Cleanser" /></td>
             <td>
-              <a href="admin-edit-product.html" class="edit-btn">Bewerken</a>
+              <a href="admin-edit-product.php" class="edit-btn">Bewerken</a>
               <a href="#" class="delete-btn">Verwijderen</a>
             </td>
           </tr>
@@ -92,7 +92,7 @@
             <td>Nee</td>
             <td><img src="images/serum.jpg" alt="Serum" /></td>
             <td>
-              <a href="admin-edit-product.html" class="edit-btn">Bewerken</a>
+              <a href="admin-edit-product.php" class="edit-btn">Bewerken</a>
               <a href="#" class="delete-btn">Verwijderen</a>
             </td>
           </tr>

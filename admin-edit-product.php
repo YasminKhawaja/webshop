@@ -9,9 +9,9 @@
   <body>
     <!-- === NAVBAR === -->
     <nav class="navbar">
-      <a href="admin-dashboard.html" class="logo">GlowCare Admin</a>
+      <a href="admin-dashboard.php" class="logo">GlowCare Admin</a>
       <div class="nav-actions">
-        <a href="admin-dashboard.html" class="back-btn"
+        <a href="admin-dashboard.php" class="back-btn"
           >← Terug naar Dashboard</a
         >
         <a href="logout.php" class="logout-btn">Uitloggen</a>
@@ -94,7 +94,7 @@ Een zachte reiniger die vuil en make-up verwijdert zonder de huid uit te drogen.
 
         <div class="button-row">
           <button type="submit" class="update-btn">Wijzigingen Opslaan</button>
-          <a href="admin-dashboard.html" class="cancel-btn">Annuleren</a>
+          <a href="admin-dashboard.php" class="cancel-btn">Annuleren</a>
         </div>
       </form>
     </main>
