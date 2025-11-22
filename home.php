@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<?php
+include_once(__DIR__ . "/classes/Database.php");
+
+
+?><!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
