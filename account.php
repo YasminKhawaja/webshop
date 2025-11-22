@@ -1,5 +1,13 @@
 <?php
+session_start();
+
 include_once("nav.inc.php");
+
+if(!isset($_SESSION['user_id'])) {
+    // Gebruiker is niet ingelogd → terug naar loginpagina
+    header("Location: home.php");
+    exit();
+}
 
 ?><!DOCTYPE html>
 <html lang="nl">

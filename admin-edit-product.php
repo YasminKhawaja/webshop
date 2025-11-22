@@ -1,3 +1,11 @@
+<?php
+session_start();
+if(!isset($_SESSION['admin_id'])) {
+    // Enkel admins mogen hier komen
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="nl">
   <head>
