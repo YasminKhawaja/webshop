@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . "/classes/Database.php");
+include_once("nav.inc.php");
 
 
 ?><!DOCTYPE html>
@@ -12,7 +13,7 @@ include_once(__DIR__ . "/classes/Database.php");
     <style></style>
   </head>
   <body>
-    <nav class="navbar">
+    <!-- <nav class="navbar">
       <a href="home.php" class="logo">GlowCare</a>
 
       <form class="search-form" action="/search" method="GET">
@@ -33,7 +34,7 @@ include_once(__DIR__ . "/classes/Database.php");
         >
         <a href="account.php">Account</a>
       </div>
-    </nav>
+    </nav> -->
 
     <header class="hero">
       <h1>Ontdek Skincare Producten</h1>

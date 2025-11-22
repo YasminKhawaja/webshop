@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+<?php 
+include_once("nav.inc.php");
+
+?><!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
@@ -7,27 +10,6 @@
     <link rel="stylesheet" href="style2.css" />
   </head>
   <body>
-    <nav class="navbar">
-      <a href="home.php" class="logo">GlowCare</a>
-
-      <form class="search-form" action="/search" method="GET">
-        <input
-          type="search"
-          name="q"
-          placeholder="Waar ben je naar op zoek?"
-          aria-label="Zoeken"
-          required
-        />
-        <button type="submit" aria-label="Zoeken">Zoek</button>
-      </form>
-
-      <div class="nav-actions">
-        <a href="login.php" class="login-btn">Inloggen</a>
-        <a href="winkelwagen.php" class="cart-btn" aria-label="Winkelwagen"
-          >🛒</a
-        >
-      </div>
-    </nav>
 
     <main class="cart-container">
       <h2>🛍️ Mijn Winkelwagen</h2>
