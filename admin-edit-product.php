@@ -5,6 +5,12 @@ if(!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Alleen admins mogen binnen
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: login.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="nl">

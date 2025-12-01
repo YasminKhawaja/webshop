@@ -9,6 +9,12 @@ if(!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Als iemand admin is, mag hij hier niet komen
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: admin-dashboard.php");
+    exit;
+}
+
 ?><!DOCTYPE html>
 <html lang="nl">
   <head>

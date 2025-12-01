@@ -2,6 +2,12 @@
 include_once(__DIR__ . "/classes/User.php");
 include_once("nav.inc.php");
 
+// Als iemand admin is, mag hij hier niet komen
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: admin-dashboard.php");
+    exit;
+}
+
 if(!empty($_POST)){
     try {
         // Controle op dubbele e-mail en wachtwoordmatch

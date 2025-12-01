@@ -36,14 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label for="password">Wachtwoord</label>
           <input type="password" id="password" name="password" required />
 
-          <a href="password-reset.php" class="forgot-password"
+          <a href="" class="forgot-password"
             >Wachtwoord vergeten?</a
           >
+
+        
           <?php if (!empty($error)): ?>
               <p style="color: red; text-align: center;"><?php echo $error; ?></p>
           <?php endif; ?>
 
           <button type="submit">Inloggen</button>
+
+          <a href="admin-login.php" class="forgot-password"
+            >Inloggen als Admin</a
+          >
 
           <span class="anders">Of</span>
 
