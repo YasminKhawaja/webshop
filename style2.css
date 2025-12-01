@@ -370,6 +370,7 @@ main {
   padding: 0.8em 2em;
   cursor: pointer;
   margin-top: 1em;
+  margin-bottom: 1em;
   transition: background 0.2s;
 }
 
