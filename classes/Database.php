@@ -1,21 +1,25 @@
 <?php
 class Database {
+    private static ?PDO $connection = null;
 
-    private static $db;
-
-    public static function getConnection() {
-        if (self::$db) {
-            // Er is al een verbinding
-            return self::$db;
-        } else {
+    public static function getConnection(): PDO {
+        if (self::$connection === null) {
             try {
-                // Maak de verbinding aan
-                self::$db = new PDO('mysql:host=localhost;dbname=webshop;charset=utf8', 'root', '');
-                self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                return self::$db;
+                self::$connection = new PDO(
+                    'mysql:host=localhost;dbname=webshop;charset=utf8mb4',
+                    'root',
+                    '',
+                    [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES => false, // Veiligheid: echte prepared statements
+                    ]
+                );
             } catch (PDOException $e) {
+                // In productie: log dit, toon geen gevoelige info
                 die("Databaseverbinding mislukt: " . $e->getMessage());
             }
         }
+        return self::$connection;
     }
 }
