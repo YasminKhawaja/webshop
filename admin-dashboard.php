@@ -1,17 +1,13 @@
 <?php
 session_start();
-if(!isset($_SESSION['admin_id'])) {
-    // Enkel admins mogen hier komen
-    header("Location: login.php");
-    exit();
-}
 
-// Alleen admins mogen binnen
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+// --- Toegangscontrole ---
+if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: admin-login.php");
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="nl">
   <head>
@@ -24,17 +20,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     <nav class="navbar">
       <a href="admin-dashboard.php" class="logo">GlowCare Admin</a>
       <div class="nav-actions">
-        <a href="admin-add-product.php" class="add-product-btn"
-          >+ Nieuw product</a
-        >
+        <a href="admin-add-product.php" class="add-product-btn">+ Nieuw product</a>
         <a href="logout.php" class="logout-btn">Uitloggen</a>
       </div>
     </nav>
 
     <main class="dashboard-container">
-      <h1>Productbeheer</h1>
+      <h1>Welkom terug, <?= htmlspecialchars($_SESSION['first_name']); ?> 👋</h1>
 
-      <!-- Filters -->
+      <h2>Productbeheer</h2>
+
       <div class="filter-bar">
         <select>
           <option value="">Filter op categorie</option>
@@ -53,23 +48,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
           <option>COSRX</option>
         </select>
 
-        <select>
-          <option value="">Producttype</option>
-          <option>Skin Care</option>
-          <option>Body Care</option>
-        </select>
-
-        <select>
-          <option value="">Cruelty Free</option>
-          <option>Ja</option>
-          <option>Nee</option>
-        </select>
-
         <input type="text" placeholder="Zoek op naam of ID..." />
         <button class="filter-btn">Zoeken</button>
       </div>
 
-      <!-- Producttabel -->
       <table class="product-table">
         <thead>
           <tr>
@@ -92,19 +74,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
             <td>Skin Care</td>
             <td>Ja</td>
             <td><img src="images/cleanser.jpg" alt="Cleanser" /></td>
-            <td>
-              <a href="admin-edit-product.php" class="edit-btn">Bewerken</a>
-              <a href="#" class="delete-btn">Verwijderen</a>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Hydrating Serum</td>
-            <td>COSRX</td>
-            <td>Serum & Ampule</td>
-            <td>Skin Care</td>
-            <td>Nee</td>
-            <td><img src="images/serum.jpg" alt="Serum" /></td>
             <td>
               <a href="admin-edit-product.php" class="edit-btn">Bewerken</a>
               <a href="#" class="delete-btn">Verwijderen</a>

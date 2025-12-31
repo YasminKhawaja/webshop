@@ -1,35 +1,44 @@
 <?php
-include_once(__DIR__ . "/classes/User.php");
-include_once("nav.inc.php");
+session_start();
+require_once(__DIR__ . "/classes/User.php");
+require_once(__DIR__ . "/nav.inc.php");
 
-// Als iemand admin is, mag hij hier niet komen
+// Admins mogen hier niet komen
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    header("Location: admin-dashboard.php");
+    header("Location: admin_dashboard.php");
     exit;
 }
 
-if(!empty($_POST)){
+$success = null;
+$error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Controle op dubbele e-mail en wachtwoordmatch
-        if($_POST['email'] !== $_POST['username']){
+        // === Validatie ===
+        $email = trim($_POST['email']);
+        $emailRepeat = trim($_POST['username']);
+        $password = $_POST['password'];
+        $passwordRepeat = $_POST['confirm-password'];
+
+        if ($email !== $emailRepeat) {
             throw new Exception("De e-mailadressen komen niet overeen.");
         }
 
-        if($_POST['password'] !== $_POST['confirm-password']){
+        if ($password !== $passwordRepeat) {
             throw new Exception("De wachtwoorden komen niet overeen.");
         }
 
-        // Nieuwe gebruiker aanmaken
+        // === Nieuwe gebruiker aanmaken ===
         $user = new User();
         $user->setFirstName($_POST['firstname']);
         $user->setLastName($_POST['lastname']);
-        $user->setEmail($_POST['email']);
-        $user->setPassword($_POST['password']);
-        $user->register();
+        $user->setEmail($email);
+        $user->setPassword($password);
+        $user->save();
 
-        echo "<script>alert('Account succesvol aangemaakt! Je kunt nu inloggen.'); window.location='login.php';</script>";
-
-    } catch(Exception $e){
+        $success = "Account succesvol aangemaakt! Je kunt nu inloggen.";
+    } 
+    catch (Exception $e) {
         $error = $e->getMessage();
     }
 }
@@ -48,13 +57,15 @@ if(!empty($_POST)){
       <section class="register-section">
         <h2>Account aanmaken</h2>
 
-        <?php if(isset($error)): ?>
-          <div style="color: red; margin-bottom: 1em; text-align:center;">
-            <?php echo htmlspecialchars($error); ?>
-          </div>
+        <!-- Feedback -->
+        <?php if($error): ?>
+          <div class="feedback error"><?php echo htmlspecialchars($error); ?></div>
+        <?php elseif($success): ?>
+          <div class="feedback success"><?php echo htmlspecialchars($success); ?></div>
+          <meta http-equiv="refresh" content="2;url=login.php" />
         <?php endif; ?>
 
-        <form class="register-form" action="" method="POST">
+        <form class="register-form" method="POST" action="">
           <label for="firstname">Voornaam</label>
           <input type="text" id="firstname" name="firstname" required />
 
@@ -65,7 +76,7 @@ if(!empty($_POST)){
           <input type="email" id="email" name="email" required />
 
           <label for="username">Herhaal e-mailadres</label>
-          <input type="text" id="username" name="username" required />
+          <input type="email" id="username" name="username" required />
 
           <label for="password">Wachtwoord</label>
           <input type="password" id="password" name="password" required />

@@ -1,8 +1,9 @@
 <?php
-session_start(); 
-?>
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-<nav class="navbar">
+?><nav class="navbar">
   <a href="home.php" class="logo">GlowCare</a>
 
   <form class="search-form" action="/search" method="GET">

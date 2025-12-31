@@ -1,21 +1,15 @@
 <?php
 session_start();
+require_once("nav.inc.php");
 
-include_once("nav.inc.php");
-
-if(!isset($_SESSION['user_id'])) {
-    // Gebruiker is niet ingelogd → terug naar loginpagina
-    header("Location: home.php");
-    exit();
-}
-
-// Als iemand admin is, mag hij hier niet komen
-if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    header("Location: admin-dashboard.php");
+// --- Toegangscontrole ---
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
+    header("Location: login.php");
     exit;
 }
+?>
 
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
@@ -27,7 +21,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
 
     <main class="account-container">
       <section class="account-card">
-        <h2>Welkom, <span id="user-name">Gebruiker</span> 👋</h2>
+        <h2>Welkom, <span id="user-name"><?= htmlspecialchars($_SESSION['first_name']); ?></span> 👋</h2>
 
         <div class="balance-box">
           <h3>Beschikbaar saldo:</h3>
@@ -37,41 +31,32 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         <div class="account-info">
           <h3>Mijn gegevens</h3>
           <ul>
-            <li><strong>Gebruikersnaam:</strong> <span>Gebruiker123</span></li>
-            <li><strong>E-mail:</strong> <span>gebruiker@example.com</span></li>
+            <li><strong>Voornaam:</strong> <?= htmlspecialchars($_SESSION['first_name']); ?></li>
+            <li><strong>E-mail:</strong> <?= htmlspecialchars($_SESSION['email']); ?></li>
           </ul>
         </div>
 
+        <?php if (isset($_GET['success'])): ?>
+  <div style="color: green; text-align: center; margin-bottom: 1em;">
+    Wachtwoord succesvol gewijzigd.
+  </div>
+<?php elseif (isset($_GET['error'])): ?>
+  <div style="color: red; text-align: center; margin-bottom: 1em;">
+    <?php echo htmlspecialchars($_GET['error']); ?>
+  </div>
+<?php endif; ?>
+
         <div class="password-section">
           <h3>Wachtwoord wijzigen</h3>
-          <form
-            class="password-form"
-            action="update_password.php"
-            method="POST"
-          >
+          <form class="password-form" action="update_password.php" method="POST">
             <label for="current-password">Huidig wachtwoord</label>
-            <input
-              type="password"
-              id="current-password"
-              name="current-password"
-              required
-            />
+            <input type="password" id="current-password" name="current-password" required />
 
             <label for="new-password">Nieuw wachtwoord</label>
-            <input
-              type="password"
-              id="new-password"
-              name="new-password"
-              required
-            />
+            <input type="password" id="new-password" name="new-password" required />
 
             <label for="confirm-password">Bevestig nieuw wachtwoord</label>
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirm-password"
-              required
-            />
+            <input type="password" id="confirm-password" name="confirm-password" required />
 
             <button type="submit">Wachtwoord bijwerken</button>
           </form>
@@ -79,7 +64,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
 
         <div class="orders-section">
           <h3>Mijn bestellingen</h3>
-
           <table class="orders-table">
             <thead>
               <tr>
@@ -95,18 +79,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
                 <td>3 stuks</td>
                 <td>€ 58,90</td>
                 <td class="status-paid">Betaald</td>
-              </tr>
-              <tr>
-                <td>24 okt 2025</td>
-                <td>1 stuk</td>
-                <td>€ 24,95</td>
-                <td class="status-paid">Betaald</td>
-              </tr>
-              <tr>
-                <td>20 okt 2025</td>
-                <td>2 stuks</td>
-                <td>€ 42,50</td>
-                <td class="status-pending">In behandeling</td>
               </tr>
             </tbody>
           </table>

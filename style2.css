@@ -1287,3 +1287,23 @@ footer {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
+
+.feedback {
+  text-align: center;
+  padding: 0.8em;
+  border-radius: 8px;
+  margin-bottom: 1em;
+  font-weight: 500;
+}
+
+.feedback.error {
+  background-color: #ffe6e6;
+  color: #d8000c;
+  border: 1px solid #d8000c;
+}
+
+.feedback.success {
+  background-color: #e6ffed;
+  color: #007a2f;
+  border: 1px solid #007a2f;
+}

@@ -1,46 +1,77 @@
 <?php
-include_once(__DIR__ . "/Database.php");
+require_once(__DIR__ . '/Person.php');
+require_once(__DIR__ . '/Database.php');
 
-class Admin {
-    private string $email;
-    private string $password;
-
-    public function setEmail($email) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Ongeldig e-mailadres.");
-        }
-        $this->email = htmlspecialchars($email);
-    }
-
-    public function setPassword($password) {
-        if (strlen($password) < 6) {
-            throw new Exception("Wachtwoord moet minstens 6 tekens bevatten.");
-        }
-        $this->password = password_hash($password, PASSWORD_DEFAULT, ['cost' => 14]);
-    }
+class Admin extends Person {
 
     // === LOGIN ===
-    public static function login($email, $password) {
+    public static function login(string $email, string $password): bool {
         $conn = Database::getConnection();
 
-        $statement = $conn->prepare("
+        $stmt = $conn->prepare("
             SELECT a.Admin_ID, a.First_Name, p.Password
             FROM admins a
             JOIN admin_passwords p ON a.Admin_ID = p.Admin_ID
             WHERE a.Email = :email AND p.Is_Current = 1
         ");
-        $statement->bindValue(":email", $email);
-        $statement->execute();
-        $admin = $statement->fetch(PDO::FETCH_ASSOC);
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
 
-        if ($admin && password_verify($password, $admin['Password'])) {
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($admin && self::verifyPassword($password, $admin['Password'])) {
             session_start();
             $_SESSION['admin_id'] = $admin['Admin_ID'];
             $_SESSION['first_name'] = $admin['First_Name'];
+            $_SESSION['email'] = $email;
             $_SESSION['role'] = 'admin';
             return true;
-        } else {
-            return false;
         }
+
+        return false;
+    }
+
+    // === UITLOGGEN ===
+    public static function logout(): void {
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: admin_login.php');
+        exit();
+    }
+
+    // === (optioneel) OPSLAAN VAN NIEUWE ADMIN ===
+    // Normaal gebeurt dit niet via registratieformulier
+    public function save(): bool {
+        $conn = Database::getConnection();
+
+        $check = $conn->prepare("SELECT * FROM admins WHERE Email = :email");
+        $check->bindValue(':email', $this->email);
+        $check->execute();
+
+        if ($check->rowCount() > 0) {
+            throw new Exception("Er bestaat al een admin met dit e-mailadres.");
+        }
+
+        $stmt = $conn->prepare("
+            INSERT INTO admins (First_Name, Last_Name, Email)
+            VALUES (:firstName, :lastName, :email)
+        ");
+        $stmt->bindValue(':firstName', $this->firstName);
+        $stmt->bindValue(':lastName', $this->lastName);
+        $stmt->bindValue(':email', $this->email);
+        $stmt->execute();
+
+        $adminId = $conn->lastInsertId();
+
+        $stmtPass = $conn->prepare("
+            INSERT INTO admin_passwords (Password, Admin_ID, Is_Current)
+            VALUES (:password, :adminId, 1)
+        ");
+        $stmtPass->bindValue(':password', $this->getPassword());
+        $stmtPass->bindValue(':adminId', $adminId);
+        $stmtPass->execute();
+
+        return true;
     }
 }
