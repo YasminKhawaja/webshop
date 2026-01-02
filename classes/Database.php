@@ -1,6 +1,7 @@
 <?php
 class Database {
     private static ?PDO $connection = null;
+    
 
     public static function getConnection(): PDO {
         if (self::$connection === null) {

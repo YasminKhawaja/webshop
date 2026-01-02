@@ -1,7 +1,21 @@
-<?php 
-include_once("nav.inc.php");
+<?php
+require_once("nav.inc.php");
+require_once(__DIR__ . "/classes/Cart.php");
+// session_start();
 
-?><!DOCTYPE html>
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // product toevoegen
+    $id = (int)$_POST['id'];
+    $name = $_POST['name'];
+    $price = (float)$_POST['price'];
+
+    Cart::addProduct($id, $name, $price);
+}
+
+$cart = Cart::getCart();
+$total = Cart::getTotal();
+?>
+<!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
@@ -10,51 +24,36 @@ include_once("nav.inc.php");
     <link rel="stylesheet" href="style2.css" />
   </head>
   <body>
-
     <main class="cart-container">
-      <h2>🛍️ Mijn Winkelwagen</h2>
+      <h2>🛒 Mijn Winkelwagen</h2>
 
-      <div class="cart-items">
-        <!-- Product 1 -->
-        <div class="cart-item">
-          <img src="images/cleanser.jpg" alt="Gentle Cleanser" />
-          <div class="item-info">
-            <h3>Gentle Cleanser</h3>
-            <p>Prijs: €19,95</p>
-            <label>
-              Aantal:
-              <input type="number" value="1" min="1" />
-            </label>
-          </div>
-          <div class="item-subtotal">
-            <p>Subtotaal: €19,95</p>
-            <button class="remove-btn">Verwijderen</button>
-          </div>
+      <?php if (empty($cart)): ?>
+        <p>Je winkelwagen is leeg.</p>
+        <a href="home.php" class="back-to-shop">Verder winkelen</a>
+      <?php else: ?>
+        <div class="cart-items">
+          <?php foreach ($cart as $id => $item): ?>
+            <div class="cart-item">
+              <img src="images/default-product.jpg" alt="<?= htmlspecialchars($item['name']); ?>" />
+              <div class="item-info">
+                <h3><?= htmlspecialchars($item['name']); ?></h3>
+                <p>Prijs: €<?= number_format($item['price'], 2, ',', '.'); ?></p>
+                <p>Aantal: <?= $item['quantity']; ?></p>
+              </div>
+              <div class="item-subtotal">
+                <p>Subtotaal: €<?= number_format($item['price'] * $item['quantity'], 2, ',', '.'); ?></p>
+                <a href="remove_from_cart.php?id=<?= $id; ?>" class="remove-btn">Verwijderen</a>
+              </div>
+            </div>
+          <?php endforeach; ?>
         </div>
 
-        <!-- Product 2 -->
-        <div class="cart-item">
-          <img src="images/serum.jpg" alt="Hydrating Serum" />
-          <div class="item-info">
-            <h3>Hydrating Serum</h3>
-            <p>Prijs: €24,95</p>
-            <label>
-              Aantal:
-              <input type="number" value="2" min="1" />
-            </label>
-          </div>
-          <div class="item-subtotal">
-            <p>Subtotaal: €49,90</p>
-            <button class="remove-btn">Verwijderen</button>
-          </div>
+        <div class="cart-summary">
+          <h3>Totaaloverzicht</h3>
+          <p><strong>Totaal:</strong> €<?= number_format($total, 2, ',', '.'); ?></p>
+          <a href="checkout.php" class="checkout-btn">Afrekenen</a>
         </div>
-      </div>
-
-      <div class="cart-summary">
-        <h3>Totaaloverzicht</h3>
-        <p><strong>Totaal:</strong> €69,85</p>
-        <button class="checkout-btn">Afrekenen</button>
-      </div>
+      <?php endif; ?>
     </main>
 
     <footer>

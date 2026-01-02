@@ -131,5 +131,27 @@ class User extends Person {
         return $statement->execute();
     }
 
+    public static function getOrders(int $userId): array {
+    $conn = Database::getConnection();
+
+    $query = "
+        SELECT 
+            o.Order_ID,
+            o.Ordered_At,
+            o.Price,
+            COUNT(po.Product_ID) AS ProductCount
+        FROM orders o
+        JOIN product_ordered po ON o.Order_ID = po.Order_ID
+        WHERE po.User_ID = :userId
+        GROUP BY o.Order_ID, o.Ordered_At, o.Price
+        ORDER BY o.Ordered_At DESC
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 }
