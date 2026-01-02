@@ -81,4 +81,55 @@ class User extends Person {
         header('Location: login.php');
         exit();
     }
+
+        // === USER DETAILS OPHALEN ===
+    public static function getById(int $userId): ?array {
+        $conn = Database::getConnection();
+
+        $statement = $conn->prepare("
+            SELECT User_ID, First_Name, Last_Name, Email, Account_Balance
+            FROM users
+            WHERE User_ID = :id
+        ");
+        $statement->bindValue(":id", $userId, PDO::PARAM_INT);
+        $statement->execute();
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $user ?: null;
+    }
+
+        // === SALDO AANPASSEN ===
+    public static function updateBalance(int $userId, float $newBalance): bool {
+        $conn = Database::getConnection();
+        $statement = $conn->prepare("UPDATE users SET Account_Balance = :balance WHERE User_ID = :id");
+        $statement->bindValue(':balance', $newBalance);
+        $statement->bindValue(':id', $userId, PDO::PARAM_INT);
+        return $statement->execute();
+    }
+
+    // === CHECK SALDO ===
+    public static function hasEnoughBalance(int $userId, float $amount): bool {
+        $conn = Database::getConnection();
+        $statement = $conn->prepare("SELECT Account_Balance FROM users WHERE User_ID = :id");
+        $statement->bindValue(':id', $userId, PDO::PARAM_INT);
+        $statement->execute();
+        $balance = $statement->fetchColumn();
+
+        return $balance !== false && $balance >= $amount;
+    }
+
+    // === VERMINDER SALDO ===
+    public static function deductBalance(int $userId, float $amount): bool {
+        $conn = Database::getConnection();
+        $statement = $conn->prepare("
+            UPDATE users 
+            SET Account_Balance = Account_Balance - :amount 
+            WHERE User_ID = :id AND Account_Balance >= :amount
+        ");
+        $statement->bindValue(':amount', $amount);
+        $statement->bindValue(':id', $userId, PDO::PARAM_INT);
+        return $statement->execute();
+    }
+
+
 }
