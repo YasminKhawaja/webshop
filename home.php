@@ -78,15 +78,15 @@ $totalPages = ceil($totalProducts / $perPage);
           <?= in_array('COSRX', $_GET['brand'] ?? []) ? 'checked' : '' ?>> COSRX</label>
 
         <h3>Categorie</h3>
-        <label><input type="checkbox" name="category[]" value="Cleanser"
+        <label><input type="checkbox" name="category[]" value="Reiniger"
           <?= in_array('Cleanser', $_GET['category'] ?? []) ? 'checked' : '' ?>> Reiniger</label>
         <label><input type="checkbox" name="category[]" value="Toner"
           <?= in_array('Toner', $_GET['category'] ?? []) ? 'checked' : '' ?>> Toner</label>
         <label><input type="checkbox" name="category[]" value="Serum & Ampoule"
           <?= in_array('Serum & Ampoule', $_GET['category'] ?? []) ? 'checked' : '' ?>> Serum & Ampoule</label>
-        <label><input type="checkbox" name="category[]" value="Mask"
+        <label><input type="checkbox" name="category[]" value="Masker"
           <?= in_array('Mask', $_GET['category'] ?? []) ? 'checked' : '' ?>> Masker</label>
-        <label><input type="checkbox" name="category[]" value="Moisturizer"
+        <label><input type="checkbox" name="category[]" value="Hydraterende Crème"
           <?= in_array('Moisturizer', $_GET['category'] ?? []) ? 'checked' : '' ?>> Hydraterende Crème</label>
 
         <h3>Cruelty Free</h3>
