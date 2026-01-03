@@ -22,17 +22,17 @@ $hasFilters = !empty($filters['brand']) || !empty($filters['category']) ||
               !empty($filters['producttype']) || $filters['crueltyfree'] !== '';
 
 if ($hasFilters) {
-    $products = Product::getFiltered($filters, $perPage, $offset);
-    $totalProducts = count($products);
+    // getFiltered geeft nu ['products' => ..., 'total' => ...] terug
+    $result = Product::getFiltered($filters, $perPage, $offset);
+    $products = $result['products'];
+    $totalProducts = $result['total'];
 } else {
     $totalProducts = Product::countAll();
     $products = Product::getPaginated($perPage, $offset);
 }
 
 $totalPages = ceil($totalProducts / $perPage);
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
@@ -79,15 +79,15 @@ $totalPages = ceil($totalProducts / $perPage);
 
         <h3>Categorie</h3>
         <label><input type="checkbox" name="category[]" value="Reiniger"
-          <?= in_array('Cleanser', $_GET['category'] ?? []) ? 'checked' : '' ?>> Reiniger</label>
+          <?= in_array('Reiniger', $_GET['category'] ?? []) ? 'checked' : '' ?>> Reiniger</label>
         <label><input type="checkbox" name="category[]" value="Toner"
           <?= in_array('Toner', $_GET['category'] ?? []) ? 'checked' : '' ?>> Toner</label>
         <label><input type="checkbox" name="category[]" value="Serum & Ampoule"
           <?= in_array('Serum & Ampoule', $_GET['category'] ?? []) ? 'checked' : '' ?>> Serum & Ampoule</label>
         <label><input type="checkbox" name="category[]" value="Masker"
-          <?= in_array('Mask', $_GET['category'] ?? []) ? 'checked' : '' ?>> Masker</label>
+          <?= in_array('Masker', $_GET['category'] ?? []) ? 'checked' : '' ?>> Masker</label>
         <label><input type="checkbox" name="category[]" value="Hydraterende Crème"
-          <?= in_array('Moisturizer', $_GET['category'] ?? []) ? 'checked' : '' ?>> Hydraterende Crème</label>
+          <?= in_array('Hydraterende Crème', $_GET['category'] ?? []) ? 'checked' : '' ?>> Hydraterende Crème</label>
 
         <h3>Cruelty Free</h3>
         <label><input type="radio" name="crueltyfree" value="1"

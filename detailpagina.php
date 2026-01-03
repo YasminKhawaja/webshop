@@ -25,18 +25,6 @@ if (!$product) {
     exit;
 }
 
-// --- Reviews ophalen ---
-$reviewsStmt = $conn->prepare("
-    SELECT c.Comment, c.Created_At, u.First_Name
-    FROM webshop.Comments c
-    JOIN webshop.users u ON c.User_ID = u.User_ID
-    WHERE c.Product_ID = :productId AND c.Is_Active = 1
-    ORDER BY c.Created_At DESC
-");
-$reviewsStmt->bindValue(":productId", $productId, PDO::PARAM_INT);
-$reviewsStmt->execute();
-$reviews = $reviewsStmt->fetchAll(PDO::FETCH_ASSOC);
-
 // --- Controleren of user mag reviewen ---
 $canReview = false;
 if (isset($_SESSION['user_id'])) {
@@ -44,7 +32,7 @@ if (isset($_SESSION['user_id'])) {
         SELECT COUNT(*) 
         FROM webshop.product_ordered po
         JOIN webshop.orders o ON po.Order_ID = o.Order_ID
-        WHERE po.User_ID = :userId AND po.Product_ID = :productId
+        WHERE o.User_ID = :userId AND po.Product_ID = :productId
     ");
     $checkPurchase->bindValue(":userId", $_SESSION['user_id'], PDO::PARAM_INT);
     $checkPurchase->bindValue(":productId", $productId, PDO::PARAM_INT);
@@ -52,7 +40,6 @@ if (isset($_SESSION['user_id'])) {
     $canReview = $checkPurchase->fetchColumn() > 0;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="nl">
   <head>
@@ -63,12 +50,8 @@ if (isset($_SESSION['user_id'])) {
   </head>
   <body>
 
-    <!-- ✅ Feedbackmelding na het posten -->
-    <?php if (isset($_GET['review']) && $_GET['review'] === 'success'): ?>
-      <p style="color:green; text-align:center; font-weight:bold;">✅ Bedankt voor je review!</p>
-    <?php elseif (isset($_GET['review']) && $_GET['review'] === 'forbidden'): ?>
-      <p style="color:red; text-align:center;">❌ Je kunt enkel een review plaatsen voor producten die je hebt gekocht.</p>
-    <?php endif; ?>
+    <!-- Dit blok is ALTIJD aanwezig en geeft product_id door aan JS -->
+    <div id="page-data" data-product-id="<?= $productId; ?>"></div>
 
     <main class="product-detail">
       <div class="image-gallery">
@@ -104,18 +87,9 @@ if (isset($_SESSION['user_id'])) {
     <!-- Reviews sectie -->
     <div class="reviews-section">
       <h2>Reviews</h2>
-
-      <?php if (empty($reviews)): ?>
-        <p>Er zijn nog geen reviews voor dit product.</p>
-      <?php else: ?>
-        <?php foreach ($reviews as $review): ?>
-          <div class="review">
-            <p class="reviewer-name"><?= htmlspecialchars($review['First_Name']); ?></p>
-            <p class="review-date"><?= date('d M Y', strtotime($review['Created_At'])); ?></p>
-            <p class="review-text"><?= htmlspecialchars($review['Comment']); ?></p>
-          </div>
-        <?php endforeach; ?>
-      <?php endif; ?>
+      <div id="reviews-container">
+        <p>Reviews worden geladen...</p>
+      </div>
     </div>
 
     <!-- Schrijf review sectie -->
@@ -127,10 +101,12 @@ if (isset($_SESSION['user_id'])) {
       <?php elseif (!$canReview): ?>
         <p style="color:gray;">Je kunt alleen een review plaatsen als je dit product hebt gekocht.</p>
       <?php else: ?>
-        <form action="post_comment.php" method="POST" id="comment-form">
+        <form id="comment-form">
+          <!-- hidden product_id alleen voor het POSTen, JS gebruikt page-data -->
           <input type="hidden" name="product_id" value="<?= $productId; ?>">
           <textarea
-            name="comment-text"
+            name="comment"
+            id="comment-text"
             rows="4"
             placeholder="Schrijf hier je review..."
             required
@@ -143,5 +119,90 @@ if (isset($_SESSION['user_id'])) {
     <footer>
       <p>&copy; 2025 GlowCare Webshop - Alle rechten voorbehouden.</p>
     </footer>
+
+    <!-- AJAX script -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const pageData = document.getElementById("page-data");
+      const productId = pageData ? pageData.dataset.productId : null;
+      const reviewsContainer = document.getElementById("reviews-container");
+
+      if (!productId) {
+        reviewsContainer.innerHTML = "<p>Product niet gevonden.</p>";
+        return;
+      }
+
+      // --- Reviews ophalen ---
+      fetch(`ajax-get-comments.php?product_id=${productId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!Array.isArray(data) || data.length === 0) {
+            reviewsContainer.innerHTML = "<p>Nog geen reviews.</p>";
+            return;
+          }
+          reviewsContainer.innerHTML = data.map(r => `
+            <div class="review">
+              <p class="reviewer-name">${r.First_Name} ${r.Last_Name}</p>
+              <p class="review-date">${new Date(r.Created_At).toLocaleDateString('nl-BE')}</p>
+              <p class="review-text">${r.Comment}</p>
+            </div>
+          `).join("");
+        })
+        .catch(() => {
+          reviewsContainer.innerHTML = "<p>Er ging iets mis bij het laden van reviews.</p>";
+        });
+
+      // --- Nieuwe review toevoegen ---
+      const form = document.getElementById("comment-form");
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const commentField = document.getElementById("comment-text");
+          const comment = commentField.value.trim();
+          if (!comment) return;
+
+          // Pak product_id uit het form of uit page-data
+          const formProductIdInput = form.querySelector('[name="product_id"]');
+          const formProductId = formProductIdInput ? formProductIdInput.value : productId;
+
+          fetch("ajax-add-comment.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              product_id: formProductId,
+              comment: comment
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) {
+              alert(data.error);
+            } else {
+              commentField.value = "";
+              // Reviews opnieuw laden
+              return fetch(`ajax-get-comments.php?product_id=${productId}`)
+                .then(res => res.json())
+                .then(data => {
+                  if (!Array.isArray(data) || data.length === 0) {
+                    reviewsContainer.innerHTML = "<p>Nog geen reviews.</p>";
+                    return;
+                  }
+                  reviewsContainer.innerHTML = data.map(r => `
+                    <div class="review">
+                      <p class="reviewer-name">${r.First_Name} ${r.Last_Name}</p>
+                      <p class="review-date">${new Date(r.Created_At).toLocaleDateString('nl-BE')}</p>
+                      <p class="review-text">${r.Comment}</p>
+                    </div>
+                  `).join("");
+                });
+            }
+          })
+          .catch(() => {
+            alert("Er ging iets mis bij het versturen van je review.");
+          });
+        });
+      }
+    });
+    </script>
   </body>
 </html>

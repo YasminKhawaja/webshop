@@ -62,11 +62,66 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // --- Filterfunctie ---
+    // --- Filterfunctie MET totaal-aantal voor paginatie ---
     public static function getFiltered(array $filters, int $limit, int $offset): array {
         $conn = Database::getConnection();
 
-        $query = "
+        $where = ["p.Is_Available = 1"];
+        $params = [];
+
+        // Merkfilter
+        if (!empty($filters['brand'])) {
+            $in = str_repeat('?,', count($filters['brand']) - 1) . '?';
+            $where[] = "b.Brand IN ($in)";
+            foreach ($filters['brand'] as $val) {
+                $params[] = $val;
+            }
+        }
+
+        // Categoriefilter
+        if (!empty($filters['category'])) {
+            $in = str_repeat('?,', count($filters['category']) - 1) . '?';
+            $where[] = "c.Category IN ($in)";
+            foreach ($filters['category'] as $val) {
+                $params[] = $val;
+            }
+        }
+
+        // Producttypefilter
+        if (!empty($filters['producttype'])) {
+            $in = str_repeat('?,', count($filters['producttype']) - 1) . '?';
+            $where[] = "t.Type IN ($in)";
+            foreach ($filters['producttype'] as $val) {
+                $params[] = $val;
+            }
+        }
+
+        // Cruelty Free filter
+        if (isset($filters['crueltyfree']) && $filters['crueltyfree'] !== '') {
+            $where[] = "p.Is_Cruelty_Free = ?";
+            $params[] = (int)$filters['crueltyfree'];
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        // 1) Totaal aantal producten met deze filters (zonder LIMIT)
+        $countSql = "
+            SELECT COUNT(*)
+            FROM products p
+            LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
+            LEFT JOIN categories c ON p.Category_ID = c.Category_ID
+            LEFT JOIN types t ON p.Type_ID = t.Type_ID
+            $whereSql
+        ";
+        $countStmt = $conn->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        // 2) Producten voor huidige pagina (met LIMIT/OFFSET)
+        $dataSql = "
             SELECT 
                 p.*, 
                 b.Brand, 
@@ -76,82 +131,63 @@ class Product {
             LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
             LEFT JOIN categories c ON p.Category_ID = c.Category_ID
             LEFT JOIN types t ON p.Type_ID = t.Type_ID
+            $whereSql
+            ORDER BY p.Product_ID ASC
+            LIMIT ? OFFSET ?
+        ";
+
+        // Voor LIMIT/OFFSET komen er 2 extra params bij
+        $dataParams = $params;
+        $dataParams[] = $limit;
+        $dataParams[] = $offset;
+
+        $stmt = $conn->prepare($dataSql);
+        $stmt->execute($dataParams);
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'products' => $products,
+            'total'    => $total
+        ];
+    }
+
+    // --- Filter voor admin ---
+    public static function getFilteredAdmin(string $category = '', string $brand = '', string $search = ''): array {
+        $conn = Database::getConnection();
+
+        $query = "
+            SELECT 
+                p.*, b.Brand, c.Category, t.Type
+            FROM products p
+            LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
+            LEFT JOIN categories c ON p.Category_ID = c.Category_ID
+            LEFT JOIN types t ON p.Type_ID = t.Type_ID
             WHERE p.Is_Available = 1
         ";
 
         $params = [];
 
-        // --- Merkfilter ---
-        if (!empty($filters['brand'])) {
-            $query .= " AND b.Brand IN (" . str_repeat('?,', count($filters['brand']) - 1) . "?)";
-            $params = array_merge($params, $filters['brand']);
+        if (!empty($category)) {
+            $query .= " AND c.Category = ?";
+            $params[] = $category;
         }
 
-        // --- Categoriefilter ---
-        if (!empty($filters['category'])) {
-            $query .= " AND c.Category IN (" . str_repeat('?,', count($filters['category']) - 1) . "?)";
-            $params = array_merge($params, $filters['category']);
+        if (!empty($brand)) {
+            $query .= " AND b.Brand = ?";
+            $params[] = $brand;
         }
 
-        // --- Producttypefilter ---
-        if (!empty($filters['producttype'])) {
-            $query .= " AND t.Type IN (" . str_repeat('?,', count($filters['producttype']) - 1) . "?)";
-            $params = array_merge($params, $filters['producttype']);
+        if (!empty($search)) {
+            $query .= " AND (p.Product_Name LIKE ? OR p.Product_ID LIKE ?)";
+            $params[] = "%$search%";
+            $params[] = "%$search%";
         }
 
-        // --- Cruelty Free filter ---
-        if (isset($filters['crueltyfree']) && $filters['crueltyfree'] !== '') {
-            $query .= " AND p.Is_Cruelty_Free = ?";
-            $params[] = $filters['crueltyfree'];
-        }
-
-        // --- Sortering + paginatie ---
-        $query .= " ORDER BY p.Product_ID ASC LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
+        $query .= " ORDER BY p.Product_ID ASC";
 
         $stmt = $conn->prepare($query);
         $stmt->execute($params);
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    public static function getFilteredAdmin(string $category = '', string $brand = '', string $search = ''): array {
-    $conn = Database::getConnection();
-
-    $query = "
-        SELECT 
-            p.*, b.Brand, c.Category, t.Type
-        FROM products p
-        LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
-        LEFT JOIN categories c ON p.Category_ID = c.Category_ID
-        LEFT JOIN types t ON p.Type_ID = t.Type_ID
-        WHERE p.Is_Available = 1
-    ";
-
-    $params = [];
-
-    if (!empty($category)) {
-        $query .= " AND c.Category = ?";
-        $params[] = $category;
-    }
-
-    if (!empty($brand)) {
-        $query .= " AND b.Brand = ?";
-        $params[] = $brand;
-    }
-
-    if (!empty($search)) {
-        $query .= " AND (p.Product_Name LIKE ? OR p.Product_ID LIKE ?)";
-        $params[] = "%$search%";
-        $params[] = "%$search%";
-    }
-
-    $query .= " ORDER BY p.Product_ID ASC";
-
-    $stmt = $conn->prepare($query);
-    $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
 }
