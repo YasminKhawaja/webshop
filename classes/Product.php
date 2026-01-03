@@ -45,6 +45,7 @@ class Product {
                 p.Description, 
                 p.Image, 
                 p.Price,
+                p.Is_Cruelty_Free,
                 b.Brand,
                 c.Category,
                 t.Type
@@ -136,7 +137,6 @@ class Product {
             LIMIT ? OFFSET ?
         ";
 
-        // Voor LIMIT/OFFSET komen er 2 extra params bij
         $dataParams = $params;
         $dataParams[] = $limit;
         $dataParams[] = $offset;
@@ -190,4 +190,78 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // --- Zoekfunctie (frontend searchbar) ---
+    public static function search(string $term, int $limit = 20, int $offset = 0): array {
+        $conn = Database::getConnection();
+        $term = trim($term);
+
+        $sql = "
+            SELECT 
+                p.Product_ID,
+                p.Product_Name,
+                p.Description,
+                p.Image,
+                p.Price,
+                p.Is_Cruelty_Free,
+                b.Brand,
+                c.Category,
+                t.Type
+            FROM products p
+            LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
+            LEFT JOIN categories c ON p.Category_ID = c.Category_ID
+            LEFT JOIN types t ON p.Type_ID = t.Type_ID
+            WHERE p.Is_Available = 1
+              AND (
+                    p.Product_Name LIKE ?
+                 OR b.Brand        LIKE ?
+                 OR c.Category     LIKE ?
+                 OR t.Type         LIKE ?
+                 OR p.Description  LIKE ?
+              )
+            ORDER BY p.Product_ID ASC
+            LIMIT ? OFFSET ?
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $like = '%' . $term . '%';
+
+        // 7 placeholders: 5x LIKE, limit, offset
+        $stmt->execute([
+            $like, $like, $like, $like, $like,
+            $limit,
+            $offset
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // --- Aantal zoekresultaten tellen ---
+    public static function countSearch(string $term): int {
+        $conn = Database::getConnection();
+        $term = trim($term);
+
+        $sql = "
+            SELECT COUNT(*)
+            FROM products p
+            LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
+            LEFT JOIN categories c ON p.Category_ID = c.Category_ID
+            LEFT JOIN types t ON p.Type_ID = t.Type_ID
+            WHERE p.Is_Available = 1
+              AND (
+                    p.Product_Name LIKE ?
+                 OR b.Brand        LIKE ?
+                 OR c.Category     LIKE ?
+                 OR t.Type         LIKE ?
+                 OR p.Description  LIKE ?
+              )
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $like = '%' . $term . '%';
+
+        // 5 placeholders: 5x LIKE
+        $stmt->execute([$like, $like, $like, $like, $like]);
+
+        return (int)$stmt->fetchColumn();
+    }
 }
