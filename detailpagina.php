@@ -73,13 +73,15 @@ if (isset($_SESSION['user_id'])) {
 
         <div class="purchase-section">
           <form action="winkelwagen.php" method="POST">
-            <input type="hidden" name="id" value="<?= $product['Product_ID']; ?>">
-            <input type="hidden" name="name" value="<?= htmlspecialchars($product['Product_Name']); ?>">
-            <input type="hidden" name="price" value="<?= $product['Price']; ?>">
-            <label for="quantity">Aantal:</label>
-            <input type="number" id="quantity" name="quantity" value="1" min="1" />
-            <button type="submit" class="add-to-cart">In winkelwagen</button>
-          </form>
+    <input type="hidden" name="id" value="<?= $product['Product_ID']; ?>">
+    <input type="hidden" name="name" value="<?= htmlspecialchars($product['Product_Name']); ?>">
+    <input type="hidden" name="price" value="<?= $product['Price']; ?>">
+    <input type="hidden" name="image" value="<?= htmlspecialchars($product['Image']); ?>">
+    <label for="quantity">Aantal:</label>
+    <input type="number" id="quantity" name="quantity" value="1" min="1" />
+    <button type="submit" class="add-to-cart">In winkelwagen</button>
+</form>
+
         </div>
       </div>
     </main>

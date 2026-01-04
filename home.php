@@ -11,10 +11,10 @@ $offset = ($page - 1) * $perPage;
 
 // --- FILTERS OPHALEN ---
 $filters = [
-    'brand'        => isset($_GET['brand']) ? (array)$_GET['brand'] : [],
-    'category'     => isset($_GET['category']) ? (array)$_GET['category'] : [],
-    'producttype'  => isset($_GET['producttype']) ? (array)$_GET['producttype'] : [],
-    'crueltyfree'  => isset($_GET['crueltyfree']) ? $_GET['crueltyfree'] : ''
+    'brand'       => isset($_GET['brand']) ? (array)$_GET['brand'] : [],
+    'category'    => isset($_GET['category']) ? (array)$_GET['category'] : [],
+    'producttype' => isset($_GET['producttype']) ? (array)$_GET['producttype'] : [],
+    'crueltyfree' => isset($_GET['crueltyfree']) ? $_GET['crueltyfree'] : ''
 ];
 
 // --- BEPALEN WELKE PRODUCTEN OPHALEN ---
@@ -32,7 +32,8 @@ if ($hasFilters) {
 }
 
 $totalPages = ceil($totalProducts / $perPage);
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
@@ -116,6 +117,7 @@ $totalPages = ceil($totalProducts / $perPage);
               <input type="hidden" name="id" value="<?= $product['Product_ID']; ?>">
               <input type="hidden" name="name" value="<?= htmlspecialchars($product['Product_Name']); ?>">
               <input type="hidden" name="price" value="<?= $product['Price']; ?>">
+              <input type="hidden" name="image" value="<?= htmlspecialchars($product['Image']); ?>">
               <button type="submit">Toevoegen aan winkelwagen</button>
             </form>
           </div>

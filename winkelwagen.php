@@ -4,13 +4,14 @@ require_once(__DIR__ . "/classes/Cart.php");
 
 // --- Product toevoegen aan winkelwagen ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-    $name = trim($_POST['name'] ?? '');
-    $price = isset($_POST['price']) ? (float)$_POST['price'] : 0;
+    $id       = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $name     = trim($_POST['name'] ?? '');
+    $price    = isset($_POST['price']) ? (float)$_POST['price'] : 0;
     $quantity = isset($_POST['quantity']) ? max(1, (int)$_POST['quantity']) : 1;
+    $image    = trim($_POST['image'] ?? '');
 
     if ($id > 0 && !empty($name) && $price > 0) {
-        Cart::addProduct($id, $name, $price, $quantity);
+        Cart::addProduct($id, $name, $price, $quantity, $image);
     }
 }
 

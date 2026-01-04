@@ -11,7 +11,13 @@ class Cart {
     }
 
     // Product toevoegen aan winkelmandje
-    public static function addProduct(int $productId, string $name, float $price, int $quantity = 1): void {
+    public static function addProduct(
+        int $productId,
+        string $name,
+        float $price,
+        int $quantity = 1,
+        string $image = ''
+    ): void {
         self::startSession();
 
         if (isset($_SESSION['cart'][$productId])) {
@@ -19,9 +25,10 @@ class Cart {
             $_SESSION['cart'][$productId]['quantity'] += $quantity;
         } else {
             $_SESSION['cart'][$productId] = [
-                'name' => htmlspecialchars($name),
-                'price' => $price,
-                'quantity' => $quantity
+                'name'     => htmlspecialchars($name),
+                'price'    => $price,
+                'quantity' => $quantity,
+                'image'    => $image
             ];
         }
     }
@@ -56,10 +63,4 @@ class Cart {
         return $total;
     }
 
-    // Aantal unieke producten in mandje
-    // public static function getItemCount(): int {
-    //     self::startSession();
-    //     return count($_SESSION['cart']);
-    // }
-    
-}
+   }
