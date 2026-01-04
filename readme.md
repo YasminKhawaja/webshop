@@ -212,6 +212,15 @@ De connectie gebeurt via `classes/Database.php` met PDO en prepared statements.
 
 ---
 
+## Disclaimer
+
+Deze website is een schoolproject en geen echte commerciële webshop.  
+Alle gebruikte afbeeldingen en merknamen zijn uitsluitend bedoeld als illustratie in een educatieve context.  
+Er is geen bedoeling om bestaande webshops te kopiëren of inbreuk te maken op auteursrechten of merkenrechten.  
+Producten, prijzen en bestellingen op deze site zijn fictief en kunnen niet daadwerkelijk worden gekocht.
+
+---
+
 **Auteur:** Yasmin  
 **Versie:** 1.0 — 2025-2026  
 **Licentie:** Voor educatief gebruik
