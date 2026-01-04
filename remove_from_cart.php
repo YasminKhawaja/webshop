@@ -1,10 +1,10 @@
 <?php
-require_once(__DIR__ . "/classes/Cart.php");
+require_once __DIR__ . '/classes/Cart.php';
 
 if (isset($_GET['id'])) {
-    $productId = (int)$_GET['id'];
-    Cart::removeProduct($productId);
+    $key = $_GET['id'];          // GEEN (int) hier
+    Cart::removeProduct($key);
 }
 
-header("Location: winkelwagen.php");
+header('Location: winkelwagen.php'); // juiste bestandsnaam van je cart-pagina
 exit;
