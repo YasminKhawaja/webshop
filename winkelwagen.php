@@ -1,22 +1,30 @@
 <?php
 require_once("nav.inc.php");
 require_once(__DIR__ . "/classes/Cart.php");
+require_once(__DIR__ . "/classes/Product.php");
 
 // --- Product toevoegen aan winkelwagen ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id       = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-    $name     = trim($_POST['name'] ?? '');
-    $price    = isset($_POST['price']) ? (float)$_POST['price'] : 0;
-    $quantity = isset($_POST['quantity']) ? max(1, (int)$_POST['quantity']) : 1;
-    $image    = trim($_POST['image'] ?? '');
+    $id        = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $name      = trim($_POST['name'] ?? '');
+    $price     = isset($_POST['price']) ? (float)$_POST['price'] : 0;
+    $quantity  = isset($_POST['quantity']) ? max(1, (int)$_POST['quantity']) : 1;
+    $image     = trim($_POST['image'] ?? '');
+    $variantId = isset($_POST['variant_id']) ? (int)$_POST['variant_id'] : 0;
+
+    // Variantinfo uit DB halen (mag null zijn als er geen variant is)
+    $variant = null;
+    if ($variantId > 0) {
+        $variant = Product::getVariantById($variantId);
+    }
 
     if ($id > 0 && !empty($name) && $price > 0) {
-        Cart::addProduct($id, $name, $price, $quantity, $image);
+        Cart::addProduct($id, $name, $price, $quantity, $image, $variant);
     }
 }
 
 // --- Winkelwagen ophalen ---
-$cart = Cart::getCart();
+$cart  = Cart::getCart();
 $total = Cart::getTotal();
 ?>
 <!DOCTYPE html>
@@ -42,6 +50,9 @@ $total = Cart::getTotal();
                    alt="<?= htmlspecialchars($item['name']); ?>" />
               <div class="item-info">
                 <h3><?= htmlspecialchars($item['name']); ?></h3>
+                <?php if (!empty($item['variant'])): ?>
+                  <p>Variant: <?= htmlspecialchars($item['variant']['name']); ?></p>
+                <?php endif; ?>
                 <p>Prijs: €<?= number_format($item['price'], 2, ',', '.'); ?></p>
                 <p>Aantal: <?= $item['quantity']; ?></p>
               </div>

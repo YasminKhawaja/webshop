@@ -2,6 +2,7 @@
 session_start();
 require_once(__DIR__ . "/classes/Database.php");
 require_once(__DIR__ . "/classes/Cart.php");
+require_once(__DIR__ . "/classes/Product.php"); // <- nodig voor varianten
 include_once("nav.inc.php");
 
 // --- Huidig product ophalen ---
@@ -24,6 +25,9 @@ if (!$product) {
     echo "<p style='color:red; text-align:center;'>Product niet gevonden.</p>";
     exit;
 }
+
+// --- Varianten voor dit product ophalen ---
+$variants = Product::getVariants($productId);
 
 // --- Controleren of user mag reviewen ---
 $canReview = false;
@@ -72,16 +76,30 @@ if (isset($_SESSION['user_id'])) {
         <p class="price"><strong>Prijs:</strong> €<?= number_format($product['Price'], 2, ',', '.'); ?></p>
 
         <div class="purchase-section">
-          <form action="winkelwagen.php" method="POST">
-    <input type="hidden" name="id" value="<?= $product['Product_ID']; ?>">
-    <input type="hidden" name="name" value="<?= htmlspecialchars($product['Product_Name']); ?>">
-    <input type="hidden" name="price" value="<?= $product['Price']; ?>">
-    <input type="hidden" name="image" value="<?= htmlspecialchars($product['Image']); ?>">
-    <label for="quantity">Aantal:</label>
-    <input type="number" id="quantity" name="quantity" value="1" min="1" />
-    <button type="submit" class="add-to-cart">In winkelwagen</button>
-</form>
+          <form action="winkelwagen.php" method="POST" class="purchase-form">
+            <input type="hidden" name="id" value="<?= $product['Product_ID']; ?>">
+            <input type="hidden" name="name" value="<?= htmlspecialchars($product['Product_Name']); ?>">
+            <input type="hidden" name="price" value="<?= $product['Price']; ?>">
+            <input type="hidden" name="image" value="<?= htmlspecialchars($product['Image']); ?>">
 
+            <?php if (!empty($variants)): ?>
+              <label for="variant">Kies inhoud:</label>
+              <select name="variant_id" id="variant">
+                <?php foreach ($variants as $variant): ?>
+                  <option value="<?= $variant['Variant_ID']; ?>">
+                    <?= htmlspecialchars($variant['Variant_Name']); ?>
+                    <?php if ((float)$variant['Extra_Price'] != 0): ?>
+                      (+€<?= number_format($variant['Extra_Price'], 2, ',', '.'); ?>)
+                    <?php endif; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            <?php endif; ?>
+
+            <label for="quantity">Aantal:</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" />
+            <button type="submit" class="add-to-cart">In winkelwagen</button>
+          </form>
         </div>
       </div>
     </main>
@@ -122,7 +140,7 @@ if (isset($_SESSION['user_id'])) {
       <p>&copy; 2025 GlowCare Webshop - Alle rechten voorbehouden.</p>
     </footer>
 
-    <!-- AJAX script -->
+    <!-- AJAX script (ongewijzigd) -->
     <script>
     document.addEventListener("DOMContentLoaded", () => {
       const pageData = document.getElementById("page-data");
@@ -163,7 +181,6 @@ if (isset($_SESSION['user_id'])) {
           const comment = commentField.value.trim();
           if (!comment) return;
 
-          // Pak product_id uit het form of uit page-data
           const formProductIdInput = form.querySelector('[name="product_id"]');
           const formProductId = formProductIdInput ? formProductIdInput.value : productId;
 
@@ -181,7 +198,6 @@ if (isset($_SESSION['user_id'])) {
               alert(data.error);
             } else {
               commentField.value = "";
-              // Reviews opnieuw laden
               return fetch(`ajax-get-comments.php?product_id=${productId}`)
                 .then(res => res.json())
                 .then(data => {

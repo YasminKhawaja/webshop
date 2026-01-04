@@ -264,4 +264,34 @@ class Product {
 
         return (int)$stmt->fetchColumn();
     }
+
+    // --- Variants voor een product ophalen ---
+    public static function getVariants(int $productId): array {
+        $conn = Database::getConnection();
+
+        $stmt = $conn->prepare("
+            SELECT Variant_ID, Variant_Name, Extra_Price
+            FROM product_variants
+            WHERE Product_ID = ?
+            ORDER BY Variant_ID ASC
+        ");
+        $stmt->execute([$productId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // --- Eén variant ophalen op ID ---
+    public static function getVariantById(int $variantId): ?array {
+        $conn = Database::getConnection();
+
+        $stmt = $conn->prepare("
+            SELECT Variant_ID, Variant_Name, Extra_Price, Product_ID
+            FROM product_variants
+            WHERE Variant_ID = ?
+        ");
+        $stmt->execute([$variantId]);
+        $variant = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $variant ?: null;
+    }
 }

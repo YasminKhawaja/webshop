@@ -10,34 +10,53 @@ class Cart {
         }
     }
 
-    // Product toevoegen aan winkelmandje
+    // Product toevoegen aan winkelmandje (met variant-ondersteuning)
     public static function addProduct(
         int $productId,
         string $name,
         float $price,
         int $quantity = 1,
-        string $image = ''
+        string $image = '',
+        ?array $variant = null
     ): void {
         self::startSession();
 
-        if (isset($_SESSION['cart'][$productId])) {
+        // Unieke sleutel per product + variant
+        $key = $productId;
+        if ($variant && isset($variant['Variant_ID'])) {
+            $key = $productId . '_' . $variant['Variant_ID'];
+        }
+
+        // Basisprijs + eventuele extra prijs van de variant
+        $finalPrice = $price;
+        if ($variant && isset($variant['Extra_Price'])) {
+            $finalPrice += (float)$variant['Extra_Price'];
+        }
+
+        if (isset($_SESSION['cart'][$key])) {
             // Bestaat al → verhoog de hoeveelheid
-            $_SESSION['cart'][$productId]['quantity'] += $quantity;
+            $_SESSION['cart'][$key]['quantity'] += $quantity;
         } else {
-            $_SESSION['cart'][$productId] = [
-                'name'     => htmlspecialchars($name),
-                'price'    => $price,
-                'quantity' => $quantity,
-                'image'    => $image
+            $_SESSION['cart'][$key] = [
+                'product_id' => $productId,
+                'name'       => htmlspecialchars($name),
+                'price'      => $finalPrice,
+                'quantity'   => $quantity,
+                'image'      => $image,
+                'variant'    => $variant ? [
+                    'id'    => $variant['Variant_ID'],
+                    'name'  => $variant['Variant_Name'],
+                    'extra' => (float)$variant['Extra_Price']
+                ] : null
             ];
         }
     }
 
     // Product verwijderen
-    public static function removeProduct(int $productId): void {
+    public static function removeProduct(string $key): void {
         self::startSession();
-        if (isset($_SESSION['cart'][$productId])) {
-            unset($_SESSION['cart'][$productId]);
+        if (isset($_SESSION['cart'][$key])) {
+            unset($_SESSION['cart'][$key]);
         }
     }
 
@@ -62,5 +81,4 @@ class Cart {
         }
         return $total;
     }
-
-   }
+}
