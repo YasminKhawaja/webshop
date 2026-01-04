@@ -1,17 +1,20 @@
 <?php
 require_once("nav.inc.php");
 require_once(__DIR__ . "/classes/Cart.php");
-// session_start();
 
+// --- Product toevoegen aan winkelwagen ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // product toevoegen
-    $id = (int)$_POST['id'];
-    $name = $_POST['name'];
-    $price = (float)$_POST['price'];
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $name = trim($_POST['name'] ?? '');
+    $price = isset($_POST['price']) ? (float)$_POST['price'] : 0;
+    $quantity = isset($_POST['quantity']) ? max(1, (int)$_POST['quantity']) : 1;
 
-    Cart::addProduct($id, $name, $price);
+    if ($id > 0 && !empty($name) && $price > 0) {
+        Cart::addProduct($id, $name, $price, $quantity);
+    }
 }
 
+// --- Winkelwagen ophalen ---
 $cart = Cart::getCart();
 $total = Cart::getTotal();
 ?>
@@ -34,7 +37,8 @@ $total = Cart::getTotal();
         <div class="cart-items">
           <?php foreach ($cart as $id => $item): ?>
             <div class="cart-item">
-              <img src="images/default-product.jpg" alt="<?= htmlspecialchars($item['name']); ?>" />
+              <img src="images/<?= htmlspecialchars($item['image'] ?? 'default-product.jpg'); ?>" 
+                   alt="<?= htmlspecialchars($item['name']); ?>" />
               <div class="item-info">
                 <h3><?= htmlspecialchars($item['name']); ?></h3>
                 <p>Prijs: €<?= number_format($item['price'], 2, ',', '.'); ?></p>
