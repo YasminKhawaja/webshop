@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST['comment-text'])) {
     // Controleren of de gebruiker dit product kocht
     $check = $conn->prepare("
         SELECT COUNT(*) 
-        FROM webshop.product_ordered 
+        FROM product_ordered 
         WHERE User_ID = :userId AND Product_ID = :productId
     ");
     $check->bindValue(":userId", $userId);
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST['comment-text'])) {
 
     if ($hasBought) {
         $stmt = $conn->prepare("
-            INSERT INTO webshop.Comments (Comment, User_ID, Product_ID)
+            INSERT INTO Comments (Comment, User_ID, Product_ID)
             VALUES (:comment, :userId, :productId)
         ");
         $stmt->bindValue(":comment", htmlspecialchars($comment));

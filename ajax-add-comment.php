@@ -26,8 +26,8 @@ try {
     // Check of user product gekocht heeft
     $check = $conn->prepare("
         SELECT COUNT(*) 
-        FROM webshop.product_ordered po
-        JOIN webshop.orders o ON po.Order_ID = o.Order_ID
+        FROM product_ordered po
+        JOIN orders o ON po.Order_ID = o.Order_ID
         WHERE o.User_ID = :uid AND po.Product_ID = :pid
     ");
     $check->bindValue(":uid", $userId, PDO::PARAM_INT);

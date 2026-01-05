@@ -11,10 +11,10 @@ $conn = Database::getConnection();
 
 $stmt = $conn->prepare("
     SELECT p.*, b.Brand, c.Category, t.Type
-    FROM webshop.products p
-    LEFT JOIN webshop.brands b ON p.Brand_ID = b.Brand_ID
-    LEFT JOIN webshop.categories c ON p.Category_ID = c.Category_ID
-    LEFT JOIN webshop.types t ON p.Type_ID = t.Type_ID
+    FROM products p
+    LEFT JOIN brands b ON p.Brand_ID = b.Brand_ID
+    LEFT JOIN categories c ON p.Category_ID = c.Category_ID
+    LEFT JOIN types t ON p.Type_ID = t.Type_ID
     WHERE p.Product_ID = :id
 ");
 $stmt->bindValue(":id", $productId, PDO::PARAM_INT);
@@ -34,8 +34,8 @@ $canReview = false;
 if (isset($_SESSION['user_id'])) {
     $checkPurchase = $conn->prepare("
         SELECT COUNT(*) 
-        FROM webshop.product_ordered po
-        JOIN webshop.orders o ON po.Order_ID = o.Order_ID
+        FROM product_ordered po
+        JOIN orders o ON po.Order_ID = o.Order_ID
         WHERE o.User_ID = :userId AND po.Product_ID = :productId
     ");
     $checkPurchase->bindValue(":userId", $_SESSION['user_id'], PDO::PARAM_INT);
